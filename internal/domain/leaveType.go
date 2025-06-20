@@ -18,6 +18,6 @@ type LeaveType struct {
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 
-	LeaveBalances []LeaveBalance `gorm:"foreignKey:LeaveTypeID"`
-	LeaveRequests []LeaveRequest `gorm:"foreignKey:LeaveTypeID"`
+	// LeaveBalances []LeaveBalance `gorm:"foreignKey:LeaveTypeID"`
+	// LeaveRequests []LeaveRequest `gorm:"foreignKey:LeaveTypeID"`
 }

@@ -3,6 +3,7 @@ package configs
 import (
 	"fmt"
 	"os"
+	"sicantik-idaman/internal/domain"
 
 	"github.com/joho/godotenv"
 )
@@ -21,4 +22,10 @@ func GetEnv(key, defaultValue string) string {
 	}
 
 	return value
+}
+
+func SetHelper(hlp *domain.Helper) {
+	hlp.Port = GetEnv("APP_PORT", "1010")
+	hlp.DbDsn = GetEnv("DSN_DB", "http://localhost")
+	hlp.JwtSecret = GetEnv("JWT_SECRET", "dundermifflin")
 }
