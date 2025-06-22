@@ -25,4 +25,27 @@ func Register(r *gin.Engine, hlp domain.Helper) {
 		apiLeaveTypes.GET("", handler.GetLeaveTypes)
 	}
 
+	apiLeaveRequest := r.Group("/api/v1/leaves/requests", middleware.Auth())
+	{
+		apiLeaveRequest.POST("", handler.CreateLeaveRequest)
+		apiLeaveRequest.GET("/me", handler.GetMyLeaveRequests)
+		apiLeaveRequest.GET("/approved", handler.GetApprovedLeaves)
+		apiLeaveRequest.PATCH("/:id", handler.UpdateStatusLeaveRequest) // update status for approver
+		apiLeaveRequest.PUT("/:id", handler.UpdateLeaveRequest)
+		apiLeaveRequest.DELETE("/:id", handler.DeleteLeaveRequest)
+		apiLeaveRequest.GET("/:id/reactions", handler.GetLeaveReactions)
+	}
+
+	apiLeaveBalanceRequest := r.Group("/api/v1/leaves/balances", middleware.Auth())
+	{
+		apiLeaveBalanceRequest.GET("/me", handler.GetMyLeaveBalance)
+	}
+
+	apiLeaveReaction := r.Group("/api/v1/leaves/reactions", middleware.Auth())
+	{
+		apiLeaveReaction.POST("", handler.CreateLeaveReaction)
+		apiLeaveReaction.PATCH("/:id", handler.UpdateLeaveReaction)
+		apiLeaveReaction.DELETE("/:id", handler.DeleteLeaveReaction)
+	}
+
 }

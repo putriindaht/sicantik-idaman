@@ -7,22 +7,23 @@ import (
 )
 
 type LeaveRequest struct {
-	ID           uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	UserID       uuid.UUID
-	LeaveTypeID  uuid.UUID
-	StartDate    time.Time
-	EndDate      time.Time
-	Reason       string
-	Status       LeaveStatus `gorm:"type:varchar(20);default:'pending'"`
-	ApprovedByID *uuid.UUID
-	ApprovedAt   *time.Time
-	NotifyTeam   bool `gorm:"default:false"`
-	IsDeleted    bool `gorm:"default:false"`
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID           uuid.UUID   `gorm:"type:uuid;default:uuid_generate_v4();primaryKey" json:"id"`
+	UserID       uuid.UUID   `json:"user_id"`
+	LeaveTypeID  uuid.UUID   `json:"leave_type_id"`
+	StartDate    time.Time   `json:"start_date"`
+	EndDate      time.Time   `json:"end_date"`
+	Reason       string      `json:"reason"`
+	Status       LeaveStatus `gorm:"type:varchar(20);default:'pending'" json:"status"`
+	ApprovedByID *uuid.UUID  `json:"approve_by_id"`
+	ApprovedAt   *time.Time  `json:"approve_at"`
+	RejectedNote *string     `gorm:"type:text" json:"rejected_note"`
+	NotifyTeam   bool        `gorm:"default:false" json:"notify_team"`
+	IsDeleted    bool        `gorm:"default:false" json:"is_deleted"`
+	CreatedAt    time.Time   `json:"created_at"`
+	UpdatedAt    time.Time   `json:"updated_at"`
 
-	User       User            `gorm:"foreignKey:UserID"`
-	LeaveType  LeaveType       `gorm:"foreignKey:LeaveTypeID"`
-	ApprovedBy *User           `gorm:"foreignKey:ApprovedByID"`
-	Reactions  []LeaveReaction `gorm:"foreignKey:LeaveRequestID"`
+	User       User            `gorm:"foreignKey:UserID" json:"-"`
+	LeaveType  *LeaveType      `gorm:"foreignKey:LeaveTypeID" json:"leave_type,omitempty"`
+	ApprovedBy *User           `gorm:"foreignKey:ApprovedByID" json:"-"`
+	Reactions  []LeaveReaction `gorm:"foreignKey:LeaveRequestID" json:"reactions,omitempty"`
 }

@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"sicantik-idaman/internal/domain"
 	"sicantik-idaman/pkg/logger"
@@ -9,11 +8,19 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
 
 type Middleware struct {
 	Helper *domain.Helper
+}
+
+type AuthInfo struct {
+	UserID uuid.UUID
+	TeamID uuid.UUID
+	Name   string
+	Role   string
 }
 
 func NewMiddleware(hlp *domain.Helper) Middleware {
@@ -36,15 +43,11 @@ func (cfg *Middleware) Auth() gin.HandlerFunc {
 
 		claims := &domain.JwtClaims{}
 
-		fmt.Println("token str : ", tokenStr)
-
 		token, err := jwt.ParseWithClaims(tokenStr, claims, func(t *jwt.Token) (interface{}, error) {
 
 			return []byte(cfg.Helper.JwtSecret), nil
 
 		})
-
-		fmt.Println(token, "token")
 
 		if err != nil || !token.Valid {
 			log.Error("error validation token", zap.String("err", err.Error()))
@@ -53,9 +56,13 @@ func (cfg *Middleware) Auth() gin.HandlerFunc {
 			return
 		}
 
-		log.Info("UserId", zap.Any("userId", claims.UserId))
-		ctx.Set("UserId", claims.UserId)
+		ctx.Set("auth", AuthInfo{claims.UserId, claims.TeamId, claims.Name, claims.Role})
+
 		ctx.Next()
 
 	}
+}
+
+func GetAuth(c *gin.Context) AuthInfo {
+	return c.MustGet("auth").(AuthInfo)
 }
